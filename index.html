@@ -3,79 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HASAN PRO - AI Mentor</title>
+    <title>HASAN SIR - AI Vision Pro</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #000; color: #fff; margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-        .market-view { flex: 2; width: 100%; border-bottom: 2px solid #d4af37; }
+        
+        /* পকেট অপশন এরিয়া */
+        .market-window { flex: 2.2; width: 100%; border-bottom: 2px solid #d4af37; position: relative; }
         iframe { width: 100%; height: 100%; border: none; }
-        
-        .stats-strip { background: #111; padding: 8px; display: flex; justify-content: space-around; font-size: 12px; font-weight: bold; border-bottom: 1px solid #333; }
-        .win { color: #00ff88; } .loss { color: #ff4444; }
 
-        .ai-mentor-panel { flex: 2; background: #050505; padding: 15px; display: flex; flex-direction: column; box-shadow: 0 -10px 40px rgba(212,175,55,0.3); overflow-y: auto; }
-        .chat-container { display: flex; gap: 15px; align-items: flex-start; margin-bottom: 10px; }
-        video { width: 35%; height: 90px; border-radius: 10px; border: 1px solid #d4af37; object-fit: cover; }
+        /* এআই কন্ট্রোল ও ভয়েস প্যানেল */
+        .ai-panel { flex: 1.8; background: #050505; padding: 15px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 -10px 40px rgba(212, 175, 55, 0.4); }
         
-        #mentor-chat { flex: 1; background: rgba(212, 175, 55, 0.05); border-radius: 12px; border-left: 4px solid #d4af37; padding: 15px; font-size: 14px; color: #eee; line-height: 1.6; min-height: 100px; box-shadow: inset 0 0 10px #000; }
+        /* বড় ক্যামেরা প্রিভিউ (যাতে আপনি ল্যাপটপে চার্ট ঠিকমতো দেখতে পান) */
+        .cam-preview { width: 60%; height: 140px; border: 2px solid #d4af37; border-radius: 12px; overflow: hidden; background: #111; margin-bottom: 10px; }
+        video { width: 100%; height: 100%; object-fit: contain; } /* 'contain' ব্যবহার করা হয়েছে যাতে পুরো চার্ট ধরে */
+
+        #status-msg { font-size: 15px; color: #00ff88; text-align: center; margin-bottom: 10px; min-height: 45px; font-weight: 500; border-left: 3px solid #d4af37; padding-left: 10px; }
         
-        .btn-box { display: flex; gap: 10px; padding-bottom: 10px; }
-        button { flex: 1; padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 11px; }
-        .btn-gold { background: linear-gradient(90deg, #d4af37, #f7e08a); color: #000; }
-        .btn-dark { background: #222; color: #fff; border: 1px solid #444; }
+        .btn-action { background: linear-gradient(90deg, #d4af37, #f7e08a); color: #000; border: none; padding: 12px 40px; border-radius: 25px; font-weight: bold; cursor: pointer; font-size: 15px; text-transform: uppercase; }
     </style>
 </head>
-<body onload="initApp()">
+<body onload="initHasanSir()">
 
-    <div class="market-view">
-        <iframe src="https://pocketoption.com/en/cabinet/demo-quick-high-low/" id="marketFrame"></iframe>
+    <div class="market-window">
+        <iframe src="https://pocketoption.com/en/cabinet/demo-quick-high-low/" id="mainFrame"></iframe>
     </div>
 
-    <div class="stats-strip">
-        <div class="win">✅ WIN: <span id="w">0</span></div>
-        <div class="loss">❌ LOSS: <span id="l">0</span></div>
-        <div style="color:#d4af37">📊 ACCURACY: <span id="a">0%</span></div>
-    </div>
-
-    <div class="ai-mentor-panel">
-        <div class="chat-container">
+    <div class="ai-panel">
+        <div class="cam-preview">
             <video id="video" autoplay playsinline></video>
-            <div id="mentor-chat">
-                <strong>হাসান প্রো মেন্টর:</strong> হ্যালো হাসান ভাই! ক্যামেরা বা স্ক্রিন শেয়ার চালু করুন। আমি শুধু সিগন্যাল দিব না, মার্কেট কেন এমন করছে সেটাও আপনাকে বুঝিয়ে বলব।
-            </div>
         </div>
-        
-        <div class="btn-box">
-            <button class="btn-gold" onclick="startCam()">BACK CAMERA</button>
-            <button class="btn-gold" onclick="startScreen()">SCREEN SHARE</button>
-            <button class="btn-dark" onclick="resetStats()">RESET</button>
-        </div>
-    </div>
 
-    <canvas id="canvas" style="display:none;"></canvas>
+        <div id="status-msg">স্বাগতম হাসান স্যার! আমি আপনার লাইভ চার্ট দেখার অপেক্ষায় আছি।</div>
+        
+        <button class="btn-action" onclick="startSirVision()">ক্যামেরা চালু করুন</button>
+        <canvas id="canvas" style="display:none;"></canvas>
+    </div>
 
     <script>
-        const video = document.getElementById('video'), canvas = document.getElementById('canvas'), chat = document.getElementById('mentor-chat');
-        let wins = 0, losses = 0;
+        const video = document.getElementById('video'), canvas = document.getElementById('canvas'), status = document.getElementById('status-msg');
         const apiKey = "AIzaSyBGITlkWp0CP3VXki1lM4CA66RhguB83H0";
 
-        function initApp() { speak("হাসান ভাই, আপনার পার্সোনাল ট্রেডিং মেন্টর তৈরি। চলুন মার্কেট এনালাইসিস করি।"); }
-
-        async function startCam() {
-            const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-            video.srcObject = s; startMentoring();
+        function initHasanSir() {
+            setTimeout(() => {
+                speak("আসসালামু আলাইকুম হাসান স্যার। কেমন আছেন আপনি? স্যার, আপনার ল্যাপটপের ক্যামেরাটি যাতে চার্টের ক্যান্ডেলগুলো ভালো করে বুঝতে পারে, আমি সেভাবে সিস্টেমটা আপডেট করেছি। দয়া করে ক্যামেরাটা চালু করুন স্যার।");
+            }, 1000);
         }
 
-        async function startScreen() {
-            const s = await navigator.mediaDevices.getDisplayMedia({ video: true });
-            video.srcObject = s; startMentoring();
+        async function startSirVision() {
+            try {
+                // হাই রেজোলিউশন এবং অটো-ফোকাস রিকোয়েস্ট
+                const constraints = {
+                    video: { 
+                        facingMode: "environment",
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 },
+                        focusMode: "continuous" 
+                    }
+                };
+                const s = await navigator.mediaDevices.getUserMedia(constraints);
+                video.srcObject = s;
+                speak("ক্যামেরা অন হয়েছে হাসান স্যার। এখন ল্যাপটপের চার্টের দিকে ক্যামেরাটা একটু স্থিরভাবে ধরুন যাতে আমি সব পরিষ্কার দেখতে পাই।");
+                status.innerText = "হাসান স্যার, আমি চার্ট এনালাইসিস করছি...";
+                setInterval(analyzeChartForSir, 18000); 
+            } catch (e) {
+                alert("স্যার, ক্যামেরা এক্সেস পাওয়া যাচ্ছে না।");
+            }
         }
 
-        function startMentoring() {
-            chat.innerHTML = "<strong>AI:</strong> মার্কেট স্ক্যান করছি... একটু অপেক্ষা করুন হাসান ভাই।";
-            setInterval(analyzeWithLogic, 18000); 
-        }
-
-        async function analyzeWithLogic() {
+        async function analyzeChartForSir() {
             if (!video.srcObject) return;
             canvas.width = video.videoWidth; canvas.height = video.videoHeight;
             canvas.getContext('2d').drawImage(video, 0, 0);
@@ -84,33 +80,24 @@
             try {
                 const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: "You are Hasan Pro's personal trading mentor. Analyze the chart. 1. Predict next candle (UP/DOWN). 2. Explain WHY (e.g. RSI overbought, strong support, green candle pressure). Speak in Bengali like a human friend. Example: 'হাসান ভাই, এখন কল ট্রেড নিন। কারণ মার্কেট সাপোর্ট জোন থেকে রিজেকশন নিয়েছে।'" }, { inline_data: { mime_type: "image/jpeg", data: b64 } }] }] })
+                    body: JSON.stringify({ contents: [{ parts: [{ text: "You are an expert trading advisor. Call the user 'Hasan Sir'. Analyze this Pocket Option chart. Speak naturally in Bengali by voice. Tell Hasan Sir why the market is moving UP or DOWN and give a clear prediction. Be very respectful and friendly." }, { inline_data: { mime_type: "image/jpeg", data: b64 } }] }] })
                 });
                 const d = await res.json();
-                const responseText = d.candidates[0].content.parts[0].text;
+                const text = d.candidates[0].content.parts[0].text;
                 
-                chat.innerHTML = `<strong>মেন্টর গাইড:</strong> ${responseText}`;
-                speak(responseText);
-
-                // উইন/লস আপডেট (সিম্পল লজিক)
-                if(responseText.includes("উপরে") || responseText.includes("কল") || responseText.includes("উইন")) { wins++; } 
-                else { losses++; }
-                updateStats();
-            } catch (e) { console.log("Error..."); }
+                status.innerText = text;
+                speak(text); 
+            } catch (e) {
+                console.log("স্ক্যানিং...");
+            }
         }
-
-        function updateStats() {
-            document.getElementById('w').innerText = wins;
-            document.getElementById('l').innerText = losses;
-            let total = wins + losses;
-            document.getElementById('a').innerText = total > 0 ? Math.round((wins/total)*100) + "%" : "0%";
-        }
-
-        function resetStats() { wins = 0; losses = 0; updateStats(); chat.innerHTML = "পরিসংখ্যান রিসেট করা হয়েছে।"; }
 
         function speak(t) {
-            const u = new SpeechSynthesisUtterance(t); u.lang = 'bn-BD';
-            u.pitch = 1.1; u.rate = 0.9;
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(t);
+            u.lang = 'bn-BD';
+            u.pitch = 1.0;
+            u.rate = 0.9;
             window.speechSynthesis.speak(u);
         }
     </script>
