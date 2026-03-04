@@ -3,61 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HASAN SIR - Advance Predictor</title>
+    <title>HASAN SIR - Signal Only</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #000; color: #fff; margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-        .market-view { flex: 2.5; border-bottom: 2px solid #d4af37; }
-        iframe { width: 100%; height: 100%; border: none; }
-        .ai-brain { flex: 1.5; background: #050505; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
-        #advance-signal { font-size: 18px; color: #00ff88; font-weight: bold; margin-bottom: 15px; border-left: 4px solid #d4af37; padding-left: 10px; min-height: 60px; }
-        .btn-sync { background: #d4af37; color: #000; padding: 12px 40px; border-radius: 30px; font-weight: bold; cursor: pointer; border: none; text-transform: uppercase; }
-        .gemini-wave { width: 100px; height: 4px; background: linear-gradient(90deg, #4285f4, #9b51e0, #d4af37); margin-top: 10px; border-radius: 2px; animation: flow 2s infinite linear; }
-        @keyframes flow { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
+        body { font-family: 'Segoe UI', sans-serif; background: #000; color: #fff; margin: 0; display: flex; flex-direction: column; height: 100vh; justify-content: center; align-items: center; }
+        
+        .signal-card { background: #0a0a0a; border: 2px solid #d4af37; border-radius: 20px; padding: 40px; width: 85%; text-align: center; box-shadow: 0 0 30px rgba(212, 175, 55, 0.2); }
+        
+        #display-text { font-size: 20px; color: #00ff88; font-weight: bold; margin-bottom: 30px; line-height: 1.6; min-height: 80px; }
+        
+        .btn-start { background: #d4af37; color: #000; border: none; padding: 15px 40px; border-radius: 30px; font-weight: 900; cursor: pointer; text-transform: uppercase; font-size: 16px; transition: 0.3s; }
+        .btn-start:active { transform: scale(0.95); }
+
+        .gemini-glow { width: 50px; height: 50px; background: #4285f4; border-radius: 50%; filter: blur(20px); margin: 0 auto 20px; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.2); opacity: 0.8; } 100% { transform: scale(1); opacity: 0.5; } }
     </style>
 </head>
-<body onload="welcome()">
+<body onload="welcomeSir()">
 
-    <div class="market-view">
-        <iframe src="https://pocketoption.com/en/cabinet/demo-quick-high-low/"></iframe>
-    </div>
-
-    <div class="ai-brain">
-        <div id="advance-signal">হাসান স্যার, আমি মার্কেট কপি করার জন্য তৈরি।</div>
-        <div class="gemini-wave"></div>
-        <button class="btn-sync" onclick="startAdvance()">অ্যাডভান্স এনালাইসিস শুরু</button>
+    <div class="signal-card">
+        <div class="gemini-glow"></div>
+        <div id="display-text">হাসান স্যার, আমি রেডি। ১ মিনিট অ্যাডভান্স সিগন্যাল পেতে নিচের বাটনে ক্লিক করুন।</div>
+        <button class="btn-start" onclick="startSignals()">সিগন্যাল চালু করুন</button>
     </div>
 
     <script>
-        const signalBox = document.getElementById('advance-signal');
+        const displayText = document.getElementById('display-text');
         const apiKey = "AIzaSyBGITlkWp0CP3VXki1lM4CA66RhguB83H0";
 
-        function welcome() {
-            speak("আসসালামু আলাইকুম হাসান স্যার। এখনকার রানিং ক্যান্ডেল শেষ হওয়ার আগেই আমি পরবর্তী ক্যান্ডেল কোথায় যাবে তা ১ লাইন আগে আপনাকে বলে দিবো।");
+        function welcomeSir() {
+            speak("আসসালামু আলাইকুম হাসান স্যার। সব বাড়তি জিনিস বাদ দিয়েছি। এখন শুধু কাজের কথা হবে। আমি আপনার জন্য ১ মিনিট আগে সিগন্যাল দিচ্ছি।");
         }
 
-        function startAdvance() {
-            signalBox.innerText = "হাসান স্যার, আমি রানিং ক্যান্ডেল পর্যবেক্ষণ করছি... ১ মিনিট অ্যাডভান্স প্রেডিকশন দিচ্ছি।";
-            speak("সিস্টেম কানেক্ট হয়েছে স্যার। আমি ১ মিনিট অ্যাডভান্স মোডে এনালাইসিস করছি।");
-            setInterval(predictNext, 45000); 
+        function startSignals() {
+            displayText.innerText = "হাসান স্যার, আমি মার্কেট কপি করছি... ১ মিনিট আগে আপনাকে ভয়েস সিগন্যাল দিবো।";
+            speak("সিস্টেম চালু হয়েছে স্যার। মার্কেট এনালাইসিস করে আমি এখনই আপনাকে জানিয়ে দিচ্ছি।");
+            setInterval(getAdvanceSignal, 45000); 
         }
 
-        async function predictNext() {
+        async function getAdvanceSignal() {
             try {
                 const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: "Act as a market predictor for Hasan Sir. Based on current market volatility, predict the NEXT 1-minute candle before it starts. Give a clear UP or DOWN signal and a very brief logical reason in a friendly Gemini-style Bengali voice. Start with 'হাসান স্যার, পরবর্তী ক্যান্ডেল...'" }] }] })
+                    body: JSON.stringify({ contents: [{ parts: [{ text: "Act as a professional signal provider for Hasan Sir. Predict the NEXT 1-minute candle (UP/DOWN) based on live market flow. Give a short, clear signal in a friendly Gemini-style Bengali voice. Just say the signal and a quick reason." }] }] })
                 });
                 const d = await res.json();
-                const result = d.candidates[0].content.parts[0].text;
-                signalBox.innerText = result;
-                speak(result);
-            } catch (e) { console.log("Syncing..."); }
+                const signal = d.candidates[0].content.parts[0].text;
+                displayText.innerText = signal;
+                speak(signal);
+            } catch (e) {
+                displayText.innerText = "ডাটা সিঙ্ক হচ্ছে হাসান স্যার...";
+            }
         }
 
         function speak(t) {
             window.speechSynthesis.cancel();
             const u = new SpeechSynthesisUtterance(t);
-            u.lang = 'bn-BD'; u.rate = 0.9;
+            u.lang = 'bn-BD';
+            u.rate = 0.9;
             window.speechSynthesis.speak(u);
         }
     </script>
