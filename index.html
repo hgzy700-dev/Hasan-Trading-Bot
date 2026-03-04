@@ -3,82 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HASAN SIR - Pro AI</title>
+    <title>HASAN SIR - FINAL PRO FIX</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: radial-gradient(circle, #1a1a1a, #000); color: #fff; margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-        
-        /* প্রফেশনাল হেডার মেনু */
-        .market-header { background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); padding: 15px; display: flex; gap: 12px; overflow-x: auto; border-bottom: 2px solid #d4af37; scrollbar-width: none; }
-        .market-header::-webkit-scrollbar { display: none; }
-        .m-btn { background: #111; color: #d4af37; border: 1px solid #d4af37; padding: 10px 25px; border-radius: 50px; font-weight: bold; cursor: pointer; white-space: nowrap; transition: 0.4s; font-size: 14px; }
-        .m-btn.active { background: linear-gradient(45deg, #d4af37, #f1c40f); color: #000; box-shadow: 0 0 15px rgba(212,175,55,0.4); transform: scale(1.05); }
-
-        /* মেইন সিগন্যাল কার্ড */
-        .main-container { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
-        .glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); padding: 50px 30px; border-radius: 40px; width: 85%; max-width: 420px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); z-index: 1; }
-        
-        #m-title { font-size: 14px; color: #888; text-transform: uppercase; letter-spacing: 4px; margin-bottom: 10px; }
-        #sig-display { font-size: 65px; font-weight: 900; margin: 20px 0; color: #d4af37; text-shadow: 0 0 20px rgba(212,175,55,0.2); transition: 0.5s; }
-        #logic-text { font-size: 16px; color: #ddd; line-height: 1.6; min-height: 50px; }
-
-        /* প্রিমিয়াম বাটন */
-        .take-btn { margin-top: 40px; background: #fff; color: #000; border: none; padding: 18px 70px; border-radius: 60px; font-weight: 900; cursor: pointer; font-size: 20px; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; box-shadow: 0 10px 30px rgba(255,255,255,0.1); }
-        .take-btn:active { transform: scale(0.95); }
-
-        /* ব্যাকগ্রাউন্ড এনিমেশন */
-        .bg-glow { width: 150px; height: 150px; background: #d4af37; border-radius: 50%; filter: blur(80px); position: absolute; opacity: 0.2; animation: pulse 4s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); opacity: 0.1; } 50% { transform: scale(1.5); opacity: 0.3; } 100% { transform: scale(1); opacity: 0.1; } }
+        body { font-family: 'Segoe UI', sans-serif; background: #000; color: #fff; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; }
+        .m-nav { position: absolute; top: 0; width: 100%; display: flex; gap: 10px; overflow-x: auto; padding: 15px; background: #111; border-bottom: 2px solid #d4af37; }
+        .m-btn { background: #222; color: #d4af37; border: 1px solid #d4af37; padding: 10px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; white-space: nowrap; }
+        .m-btn.active { background: #d4af37; color: #000; }
+        .card { width: 85%; max-width: 400px; padding: 40px 20px; border-radius: 30px; background: #0a0a0a; border: 4px solid #d4af37; box-shadow: 0 0 30px rgba(212, 175, 55, 0.3); }
+        #sig-text { font-size: 60px; font-weight: 900; margin: 20px 0; color: #d4af37; }
+        .btn-go { margin-top: 30px; background: #fff; color: #000; border: none; padding: 18px 70px; border-radius: 50px; font-weight: 900; cursor: pointer; font-size: 20px; }
     </style>
 </head>
 <body>
 
-    <div class="market-header">
-        <button class="m-btn active" onclick="setMarket('EUR/USD OTC', this)">EUR/USD</button>
-        <button class="m-btn" onclick="setMarket('AUD/CAD OTC', this)">AUD/CAD</button>
-        <button class="m-btn" onclick="setMarket('GBP/USD REAL', this)">GBP/USD</button>
-        <button class="m-btn" onclick="setMarket('BITCOIN', this)">BTC/USDT</button>
-        <button class="m-btn" onclick="setMarket('GOLD/XAUUSD', this)">GOLD</button>
+    <div class="m-nav">
+        <button class="m-btn active" onclick="chM('EUR/USD OTC', this)">EUR/USD</button>
+        <button class="m-btn" onclick="chM('AUD/CAD OTC', this)">AUD/CAD</button>
+        <button class="m-btn" onclick="chM('BITCOIN', this)">BITCOIN</button>
     </div>
 
-    <div class="main-container">
-        <div class="bg-glow"></div>
-        <div class="glass-card">
-            <div id="m-title">EUR/USD OTC</div>
-            <div id="sig-display">READY</div>
-            <div id="logic-text">হাসান স্যার, ১ মিনিট অ্যাডভান্স এনালাইসিস শুরু করতে নিচের বাটনে ক্লিক করুন।</div>
-        </div>
-
-        <button class="take-btn" onclick="getProSignal()">Take Signal</button>
+    <div class="card">
+        <div id="m-label" style="color: #888; text-transform: uppercase;">EUR/USD OTC</div>
+        <div id="sig-text">READY</div>
+        <div id="reason-text" style="font-size: 15px; color: #ccc;">হাসান স্যার, সিগন্যাল নিতে নিচের বাটনে ক্লিক করুন।</div>
     </div>
+
+    <button class="btn-go" onclick="startSignal()">Take Signal</button>
 
     <script>
-        let currentAsset = "EUR/USD OTC";
-        const sigEl = document.getElementById('sig-display');
-        const logicEl = document.getElementById('logic-text');
-        const titleEl = document.getElementById('m-title');
+        let selectedM = "EUR/USD OTC";
+        const sigEl = document.getElementById('sig-text');
+        const resEl = document.getElementById('reason-text');
+        const mEl = document.getElementById('m-label');
 
-        // আপনার নতুন API Key এখানে বসানো হয়েছে
-        const HASAN_KEY = "AIzaSyDRBGkOfzprfYQhGAB7L-D_auHaZTbasV0"; 
-
-        function setMarket(name, btn) {
-            document.querySelectorAll('.m-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentAsset = name;
-            titleEl.innerText = name;
-            sigEl.innerText = "READY";
-            sigEl.style.color = "#d4af37";
+        function chM(n, b) {
+            document.querySelectorAll('.m-btn').forEach(btn => btn.classList.remove('active'));
+            b.classList.add('active');
+            selectedM = n;
+            mEl.innerText = n;
         }
 
-        async function getProSignal() {
-            sigEl.innerText = "Wait...";
-            sigEl.style.color = "#d4af37";
-            logicEl.innerText = "মার্কেট স্ক্যান করছি হাসান স্যার...";
-
+        async function startSignal() {
+            sigEl.innerText = "WAIT...";
+            resEl.innerText = "মার্কেট এনালাইসিস করছি...";
+            
             try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${HASAN_KEY}`, {
+                // আপনার দেওয়া নতুন কী (Key) এখানে বসানো হয়েছে
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyDRBGkOfzprfYQhGAB7L-D_auHaZTbasV0`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: "Strictly predict next 1-minute candle for " + currentAsset + ". Respond only with 'UP' or 'DOWN' and one technical reason in Bengali." }] }] })
+                    body: JSON.stringify({ contents: [{ parts: [{ text: "Predict next 1-min candle for " + selectedM + ". Only say 'UP' or 'DOWN' and why in Bengali." }] }] })
                 });
 
                 const data = await response.json();
@@ -87,17 +61,16 @@
                 if (text.toUpperCase().includes("UP")) {
                     sigEl.innerText = "UP ↑";
                     sigEl.style.color = "#00ff88";
-                    sigEl.style.textShadow = "0 0 30px rgba(0,255,136,0.4)";
                 } else {
                     sigEl.innerText = "DOWN ↓";
-                    sigEl.style.color = "#ff4d4d";
-                    sigEl.style.textShadow = "0 0 30px rgba(255,77,77,0.4)";
+                    sigEl.style.color = "#ff4444";
                 }
-                logicEl.innerText = text;
+                resEl.innerText = text;
 
-            } catch (error) {
-                sigEl.innerText = "Error";
-                logicEl.innerText = "হাসান স্যার, ইন্টারনেট চেক করুন অথবা কি (Key) যাচাই করুন।";
+            } catch (err) {
+                // যদি কী (Key) তে সমস্যা থাকে তবে এটি কাজ করবে
+                sigEl.innerText = "ERROR";
+                resEl.innerText = "হাসান স্যার, কি (Key) অথবা ইন্টারনেট কানেকশন চেক করুন।";
             }
         }
     </script>
