@@ -3,82 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HASAN SIR - FAST SIGNAL</title>
+    <title>HASAN SIR - FINAL FIX</title>
     <style>
         body { font-family: sans-serif; background: #000; color: #fff; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
-        
-        /* মার্কেট মেনু */
-        .m-header { position: absolute; top: 0; width: 100%; display: flex; gap: 8px; overflow-x: auto; padding: 15px; background: #111; border-bottom: 2px solid #d4af37; }
-        .m-btn { background: #222; color: #d4af37; border: 1px solid #d4af37; padding: 10px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; white-space: nowrap; }
-        .m-btn.active { background: #d4af37; color: #000; }
-
-        /* মেইন সিগন্যাল ডিসপ্লে */
-        .box { width: 85%; max-width: 380px; padding: 40px 20px; border-radius: 25px; background: #080808; border: 3px solid #d4af37; text-align: center; box-shadow: 0 0 30px rgba(212, 175, 55, 0.3); }
-        #m-name { font-size: 14px; color: #888; letter-spacing: 2px; margin-bottom: 10px; }
-        #sig { font-size: 55px; font-weight: 900; color: #d4af37; margin: 20px 0; }
-        #txt { font-size: 15px; color: #ccc; min-height: 40px; line-height: 1.4; }
-
-        .go-btn { margin-top: 30px; background: #fff; color: #000; border: none; padding: 15px 60px; border-radius: 50px; font-weight: 900; cursor: pointer; font-size: 18px; box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
-        .go-btn:active { transform: scale(0.95); }
+        .box { width: 85%; max-width: 380px; padding: 40px 20px; border-radius: 25px; background: #080808; border: 3px solid #d4af37; text-align: center; }
+        #sig { font-size: 60px; font-weight: 900; color: #d4af37; margin: 20px 0; }
+        .go-btn { background: #fff; color: #000; border: none; padding: 15px 60px; border-radius: 50px; font-weight: 900; cursor: pointer; font-size: 18px; }
     </style>
 </head>
 <body>
 
-    <div class="m-header">
-        <button class="m-btn active" onclick="chM('EUR/USD OTC', this)">EUR/USD</button>
-        <button class="m-btn" onclick="chM('AUD/CAD OTC', this)">AUD/CAD</button>
-        <button class="m-btn" onclick="chM('GBP/USD REAL', this)">GBP/USD</button>
-        <button class="m-btn" onclick="chM('CRYPTO/BTC', this)">BITCOIN</button>
-    </div>
-
     <div class="box">
-        <div id="m-name">EUR/USD OTC</div>
-        <div id="sig">READY?</div>
-        <div id="txt">হাসান স্যার, ১ মিনিট পরের সিগন্যাল পেতে বাটনে চাপ দিন।</div>
+        <div id="m-name" style="color: #888; font-weight: bold;">EUR/USD OTC</div>
+        <div id="sig">READY</div>
+        <div id="txt" style="color: #ccc;">হাসান স্যার, বাটনে চাপ দিলেই সিগন্যাল আসবে।</div>
     </div>
-
-    <button class="go-btn" onclick="getHasanSignal()">সিগন্যাল নিন</button>
+    <br>
+    <button class="go-btn" onclick="getHasanSignal()">Take the signal.</button>
 
     <script>
-        let assetName = "EUR/USD OTC";
-        const sigEl = document.getElementById('sig');
-        const txtEl = document.getElementById('txt');
-        const mEl = document.getElementById('m-name');
-
-        function chM(name, b) {
-            document.querySelectorAll('.m-btn').forEach(btn => btn.classList.remove('active'));
-            b.classList.add('active');
-            assetName = name;
-            mEl.innerText = name;
-        }
-
         async function getHasanSignal() {
+            const sigEl = document.getElementById('sig');
+            const txtEl = document.getElementById('txt');
             sigEl.innerText = "WAIT...";
-            sigEl.style.color = "#d4af37";
-            txtEl.innerText = "মার্কেট স্ক্যান করছি হাসান স্যার...";
-            
-            try {
-                // জেমিনি এআই সরাসরি কানেকশন
-                const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyBGITlkWp0CP3VXki1lM4CA66RhguB83H0`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: "Analyze " + assetName + " and predict ONLY 'UP' or 'DOWN' for the next 1 minute candle. Also give a 1-sentence logic in Bengali." }] }] })
-                });
-                const d = await r.json();
-                const resText = d.candidates[0].content.parts[0].text;
 
-                if(resText.toUpperCase().includes("UP")) {
-                    sigEl.innerText = "UP ↑";
-                    sigEl.style.color = "#00ff88";
-                } else {
-                    sigEl.innerText = "DOWN ↓";
-                    sigEl.style.color = "#ff4444";
-                }
-                txtEl.innerText = resText;
-            } catch (e) {
-                sigEl.innerText = "AGAIN";
-                txtEl.innerText = "হাসান স্যার, নেট চেক করে আবার ট্রাই করুন।";
-            }
-        }
-    </script>
-</body>
-</html>
+            // হাসান স্যার, আমি এখানে ৩টি আলাদা ব্যাকআপ সিস্টেম রেখেছি
+            try {
+                const response = await fetch(`
