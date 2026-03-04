@@ -3,97 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hasan AI Trading Bot</title>
+    <title>Hasan AI Ultimate Trader</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #0b0e11; color: white; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
-        .app-container { background: #1e2329; padding: 25px; border-radius: 20px; text-align: center; width: 90%; max-width: 400px; border: 1px solid #474d57; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        video { width: 100%; border-radius: 12px; border: 2px solid #f0b90b; margin-bottom: 15px; background: black; transform: scaleX(1); }
-        .btn-analyze { background-color: #f0b90b; color: black; border: none; padding: 18px; border-radius: 12px; font-weight: bold; font-size: 18px; width: 100%; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(240, 185, 11, 0.3); }
-        .btn-analyze:active { transform: scale(0.95); }
-        #result { margin-top: 20px; font-size: 24px; font-weight: bold; color: #00ff88; text-shadow: 0 0 10px rgba(0,255,136,0.5); min-height: 40px; }
-        .status { font-size: 12px; color: #848e9c; margin-top: 15px; letter-spacing: 0.5px; }
-        canvas { display: none; }
+        body { font-family: 'Segoe UI', sans-serif; background: radial-gradient(circle, #0f172a, #020617); color: white; margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+        .container { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(10px); padding: 20px; border-radius: 25px; text-align: center; width: 95%; max-width: 450px; border: 1px solid #334155; box-shadow: 0 0 20px rgba(0, 255, 136, 0.2); position: relative; }
+        #clock { position: absolute; top: 15px; right: 20px; font-size: 14px; color: #f0b90b; font-weight: bold; }
+        select, input { width: 95%; padding: 10px; margin: 8px 0; border-radius: 10px; border: 1px solid #474d57; background: #0f172a; color: white; text-align: center; }
+        video { width: 100%; border-radius: 15px; border: 2px solid #00ff88; box-shadow: 0 0 15px rgba(0, 255, 136, 0.3); }
+        #result { margin-top: 15px; font-size: 16px; font-weight: bold; color: #00ff88; min-height: 100px; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 12px; border: 1px dashed #00ff88; line-height: 1.4; }
+        .btn { background: linear-gradient(90deg, #f0b90b, #d8a608); color: black; border: none; padding: 15px; border-radius: 12px; font-weight: bold; width: 100%; cursor: pointer; font-size: 18px; }
+        .scan-line { width: 100%; height: 2px; background: #00ff88; position: absolute; top: 50%; left: 0; animation: scan 2s infinite; opacity: 0.6; pointer-events: none; }
+        @keyframes scan { 0% { top: 10%; } 100% { top: 90%; } }
     </style>
 </head>
 <body>
 
-    <div class="app-container">
-        <h2 style="color: #f0b90b; margin-top: 0; font-size: 24px;">AI TRADER LIVE</h2>
-        <video id="video" autoplay playsinline></video>
-        <canvas id="canvas"></canvas>
-
-        <button class="btn-analyze" onclick="captureAndAnalyze()">GET LIVE SIGNAL</button>
-
-        <div id="result">---</div>
-        <div class="status" id="status">ক্যামেরা চার্টের সামনে ধরে বাটন টিপুন</div>
+    <div id="login-section" class="container">
+        <h2 style="color: #f0b90b; letter-spacing: 2px;">HASAN AI PRO</h2>
+        <input type="password" id="passInput" placeholder="পাসওয়ার্ড লিখুন">
+        <button class="btn" onclick="checkLogin()">LOGIN</button>
+        <p id="loginError" style="color: #ff4d4d; margin-top: 10px;"></p>
     </div>
 
-    <script>
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
-        const resultDiv = document.getElementById('result');
-        const statusDiv = document.getElementById('status');
+    <div id="app-section" class="container" style="display: none;">
+        <div id="clock">00:00:00</div>
+        <h3 style="color: #00ff88; margin-top: 0;">AI LIVE SCANNER</h3>
         
-        // আপনার API Key এখানে বসানো হয়েছে
-        const apiKey = "AIzaSyBGITlkWp0CP3VXki1lM4CA66RhguB83H0"; 
+        <div style="display: flex; gap: 5px;">
+            <select id="timeframe">
+                <option value="1 minute">1 min Trade</option>
+                <option value="2 minutes">2 min Trade</option>
+                <option value="5 minutes">5 min Trade</option>
+            </select>
+            <select id="voiceType">
+                <option value="female">মেয়ের কন্ঠ</option>
+                <option value="male">ছেলের কন্ঠ</option>
+            </select>
+        </div>
 
-        async function startCamera() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: "environment" } 
-                });
-                video.srcObject = stream;
-            } catch (err) {
-                statusDiv.innerText = "ক্যামেরা পারমিশন দিন এবং পেজ রিফ্রেশ করুন!";
-            }
-        }
-
-        async function captureAndAnalyze() {
-            if (!video.srcObject) return;
-
-            resultDiv.innerText = "এনালাইসিস চলছে...";
-            statusDiv.innerText = "Gemini AI চার্ট দেখছে...";
-
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            canvas.getContext('2d').drawImage(video, 0, 0);
-            
-            const base64Data = canvas.toDataURL('image/jpeg').split(',')[1];
-
-            const payload = {
-                contents: [{
-                    parts: [
-                        { text: "Analyze this trading chart. Tell me clearly: 'Take UP trade' or 'Take DOWN trade' or 'Wait'. Respond in Bengali in one very short sentence." },
-                        { inline_data: { mime_type: "image/jpeg", data: base64Data } }
-                    ]
-                }]
-            };
-
-            try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                const data = await response.json();
-                const signal = data.candidates[0].content.parts[0].text;
-                
-                resultDiv.innerText = signal;
-                statusDiv.innerText = "সিগন্যাল সম্পন্ন!";
-
-                // ভয়েস সিগন্যাল
-                const utterance = new SpeechSynthesisUtterance(signal);
-                utterance.lang = 'bn-BD';
-                window.speechSynthesis.speak(utterance);
-
-            } catch (error) {
-                resultDiv.innerText = "আবার চেষ্টা করুন";
-                statusDiv.innerText = "কানেকশন এরর!";
-            }
-        }
-
-        startCamera();
-    </script>
-</body>
-</html>
+        <div style="position: relative; margin-top: 10px;">
+            <video id="video" autoplay playsinline></video>
+            <div class="scan-line"></div>
+        </div>
