@@ -3,65 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HASAN SIR - Signal Only</title>
+    <title>HASAN SIR - Animated AI</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #000; color: #fff; margin: 0; display: flex; flex-direction: column; height: 100vh; justify-content: center; align-items: center; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: radial-gradient(circle at center, #111, #000); color: #fff; margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
         
-        .signal-card { background: #0a0a0a; border: 2px solid #d4af37; border-radius: 20px; padding: 40px; width: 85%; text-align: center; box-shadow: 0 0 30px rgba(212, 175, 55, 0.2); }
-        
-        #display-text { font-size: 20px; color: #00ff88; font-weight: bold; margin-bottom: 30px; line-height: 1.6; min-height: 80px; }
-        
-        .btn-start { background: #d4af37; color: #000; border: none; padding: 15px 40px; border-radius: 30px; font-weight: 900; cursor: pointer; text-transform: uppercase; font-size: 16px; transition: 0.3s; }
-        .btn-start:active { transform: scale(0.95); }
+        /* এনিমেটেড মার্কেট মেনু */
+        .market-menu { background: rgba(20, 20, 20, 0.8); backdrop-filter: blur(10px); padding: 15px; display: flex; gap: 12px; overflow-x: auto; border-bottom: 1px solid rgba(212, 175, 55, 0.3); scrollbar-width: none; }
+        .market-menu::-webkit-scrollbar { display: none; }
+        .market-btn { background: #1a1a1a; color: #d4af37; border: 1px solid #d4af37; padding: 10px 22px; border-radius: 50px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.4s ease; }
+        .market-btn.active { background: linear-gradient(45deg, #d4af37, #f7e08a); color: #000; transform: scale(1.05); box-shadow: 0 0 15px rgba(212, 175, 55, 0.4); border: none; }
 
-        .gemini-glow { width: 50px; height: 50px; background: #4285f4; border-radius: 50%; filter: blur(20px); margin: 0 auto 20px; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.2); opacity: 0.8; } 100% { transform: scale(1); opacity: 0.5; } }
+        /* মেইন এনিমেশন এরিয়া */
+        .display-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+        
+        /* জেমিনি স্টাইল এনিমেটেড গ্লো */
+        .glow-circle { width: 120px; height: 120px; background: linear-gradient(45deg, #4285f4, #9b51e0, #d4af37); border-radius: 50%; filter: blur(40px); position: absolute; animation: rotateGlow 6s infinite linear; opacity: 0.5; z-index: 0; }
+        @keyframes rotateGlow { from { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.2); } to { transform: rotate(360deg) scale(1); } }
+
+        .signal-card { z-index: 1; text-align: center; width: 85%; max-width: 450px; padding: 30px; border-radius: 30px; background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        
+        #current-market { font-size: 12px; color: #aaa; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 5px; }
+        #signal-text { font-size: 40px; font-weight: 900; margin: 15px 0; letter-spacing: 2px; transition: 0.5s; }
+        #logic-brief { font-size: 14px; color: #ddd; line-height: 1.6; min-height: 40px; opacity: 0.8; }
+
+        /* প্রগ্রেস বার এনিমেশন */
+        .timer-bar { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 25px; overflow: hidden; }
+        .timer-fill { width: 100%; height: 100%; background: #d4af37; animation: countdown 50s linear infinite; }
+        @keyframes countdown { from { width: 100%; } to { width: 0%; } }
     </style>
 </head>
-<body onload="welcomeSir()">
+<body>
 
-    <div class="signal-card">
-        <div class="gemini-glow"></div>
-        <div id="display-text">হাসান স্যার, আমি রেডি। ১ মিনিট অ্যাডভান্স সিগন্যাল পেতে নিচের বাটনে ক্লিক করুন।</div>
-        <button class="btn-start" onclick="startSignals()">সিগন্যাল চালু করুন</button>
+    <div class="market-menu">
+        <button class="market-btn active" onclick="changeMarket('EUR/USD OTC', this)">EUR/USD OTC</button>
+        <button class="market-btn" onclick="changeMarket('AUD/CAD OTC', this)">AUD/CAD OTC</button>
+        <button class="market-btn" onclick="changeMarket('GBP/USD REAL', this)">GBP/USD REAL</button>
+        <button class="market-btn" onclick="changeMarket('BITCOIN', this)">BITCOIN</button>
+        <button class="market-btn" onclick="changeMarket('GOLD', this)">GOLD</button>
+        <button class="market-btn" onclick="changeMarket('USD/JPY OTC', this)">USD/JPY OTC</button>
+    </div>
+
+    <div class="display-area">
+        <div class="glow-circle"></div>
+        
+        <div class="signal-card">
+            <div id="current-market">EUR/USD OTC</div>
+            <div id="signal-text">স্ক্যানিং...</div>
+            <div id="logic-brief">হাসান স্যার, আমি মার্কেট কপি করছি। সিগন্যাল লোড হচ্ছে।</div>
+            
+            <div class="timer-bar">
+                <div class="timer-fill"></div>
+            </div>
+        </div>
     </div>
 
     <script>
-        const displayText = document.getElementById('display-text');
+        let selectedAsset = "EUR/USD OTC";
+        const signalEl = document.getElementById('signal-text');
+        const logicEl = document.getElementById('logic-brief');
+        const marketEl = document.getElementById('current-market');
         const apiKey = "AIzaSyBGITlkWp0CP3VXki1lM4CA66RhguB83H0";
 
-        function welcomeSir() {
-            speak("আসসালামু আলাইকুম হাসান স্যার। সব বাড়তি জিনিস বাদ দিয়েছি। এখন শুধু কাজের কথা হবে। আমি আপনার জন্য ১ মিনিট আগে সিগন্যাল দিচ্ছি।");
+        function changeMarket(name, btn) {
+            document.querySelectorAll('.market-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            selectedAsset = name;
+            marketEl.innerText = name;
+            signalEl.innerText = "স্ক্যানিং...";
+            signalEl.style.color = "#fff";
+            logicEl.innerText = "মার্কেট পরিবর্তন হয়েছে। ডাটা সিঙ্ক করা হচ্ছে।";
+            fetchSignal();
         }
 
-        function startSignals() {
-            displayText.innerText = "হাসান স্যার, আমি মার্কেট কপি করছি... ১ মিনিট আগে আপনাকে ভয়েস সিগন্যাল দিবো।";
-            speak("সিস্টেম চালু হয়েছে স্যার। মার্কেট এনালাইসিস করে আমি এখনই আপনাকে জানিয়ে দিচ্ছি।");
-            setInterval(getAdvanceSignal, 45000); 
-        }
-
-        async function getAdvanceSignal() {
+        async function fetchSignal() {
             try {
                 const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: "Act as a professional signal provider for Hasan Sir. Predict the NEXT 1-minute candle (UP/DOWN) based on live market flow. Give a short, clear signal in a friendly Gemini-style Bengali voice. Just say the signal and a quick reason." }] }] })
+                    body: JSON.stringify({ contents: [{ parts: [{ text: "Provide the NEXT 1-MINUTE candle signal for " + selectedAsset + ". Output format: 'UP' or 'DOWN' in first line, and a one-sentence technical reason in Bengali on the second line. Text only." }] }] })
                 });
                 const d = await res.json();
-                const signal = d.candidates[0].content.parts[0].text;
-                displayText.innerText = signal;
-                speak(signal);
+                const response = d.candidates[0].content.parts[0].text.split('\n');
+                const prediction = response[0].trim().toUpperCase();
+                const reason = response[1] || "মার্কেট ভোলারিটি অনুযায়ী প্রেডিকশন দেওয়া হয়েছে।";
+
+                if (prediction.includes("UP")) {
+                    signalEl.innerText = "UP (CALL) ↑";
+                    signalEl.style.color = "#00ff88";
+                    signalEl.style.textShadow = "0 0 20px rgba(0, 255, 136, 0.5)";
+                } else {
+                    signalEl.innerText = "DOWN (PUT) ↓";
+                    signalEl.style.color = "#ff4d4d";
+                    signalEl.style.textShadow = "0 0 20px rgba(255, 77, 77, 0.5)";
+                }
+                logicEl.innerText = reason;
             } catch (e) {
-                displayText.innerText = "ডাটা সিঙ্ক হচ্ছে হাসান স্যার...";
+                signalEl.innerText = "অপেক্ষা করুন...";
             }
         }
 
-        function speak(t) {
-            window.speechSynthesis.cancel();
-            const u = new SpeechSynthesisUtterance(t);
-            u.lang = 'bn-BD';
-            u.rate = 0.9;
-            window.speechSynthesis.speak(u);
-        }
+        setInterval(fetchSignal, 50000);
+        setTimeout(fetchSignal, 1500);
     </script>
 </body>
 </html>
