@@ -3,101 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HASAN SIR - AI Vision Pro</title>
+    <title>HASAN SIR - Advance Predictor</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #000; color: #fff; margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-        
-        /* পকেট অপশন এরিয়া */
-        .market-window { flex: 2.2; width: 100%; border-bottom: 2px solid #d4af37; position: relative; }
+        .market-view { flex: 2.5; border-bottom: 2px solid #d4af37; }
         iframe { width: 100%; height: 100%; border: none; }
-
-        /* এআই কন্ট্রোল ও ভয়েস প্যানেল */
-        .ai-panel { flex: 1.8; background: #050505; padding: 15px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 -10px 40px rgba(212, 175, 55, 0.4); }
-        
-        /* বড় ক্যামেরা প্রিভিউ (যাতে আপনি ল্যাপটপে চার্ট ঠিকমতো দেখতে পান) */
-        .cam-preview { width: 60%; height: 140px; border: 2px solid #d4af37; border-radius: 12px; overflow: hidden; background: #111; margin-bottom: 10px; }
-        video { width: 100%; height: 100%; object-fit: contain; } /* 'contain' ব্যবহার করা হয়েছে যাতে পুরো চার্ট ধরে */
-
-        #status-msg { font-size: 15px; color: #00ff88; text-align: center; margin-bottom: 10px; min-height: 45px; font-weight: 500; border-left: 3px solid #d4af37; padding-left: 10px; }
-        
-        .btn-action { background: linear-gradient(90deg, #d4af37, #f7e08a); color: #000; border: none; padding: 12px 40px; border-radius: 25px; font-weight: bold; cursor: pointer; font-size: 15px; text-transform: uppercase; }
+        .ai-brain { flex: 1.5; background: #050505; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
+        #advance-signal { font-size: 18px; color: #00ff88; font-weight: bold; margin-bottom: 15px; border-left: 4px solid #d4af37; padding-left: 10px; min-height: 60px; }
+        .btn-sync { background: #d4af37; color: #000; padding: 12px 40px; border-radius: 30px; font-weight: bold; cursor: pointer; border: none; text-transform: uppercase; }
+        .gemini-wave { width: 100px; height: 4px; background: linear-gradient(90deg, #4285f4, #9b51e0, #d4af37); margin-top: 10px; border-radius: 2px; animation: flow 2s infinite linear; }
+        @keyframes flow { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
     </style>
 </head>
-<body onload="initHasanSir()">
+<body onload="welcome()">
 
-    <div class="market-window">
-        <iframe src="https://pocketoption.com/en/cabinet/demo-quick-high-low/" id="mainFrame"></iframe>
+    <div class="market-view">
+        <iframe src="https://pocketoption.com/en/cabinet/demo-quick-high-low/"></iframe>
     </div>
 
-    <div class="ai-panel">
-        <div class="cam-preview">
-            <video id="video" autoplay playsinline></video>
-        </div>
-
-        <div id="status-msg">স্বাগতম হাসান স্যার! আমি আপনার লাইভ চার্ট দেখার অপেক্ষায় আছি।</div>
-        
-        <button class="btn-action" onclick="startSirVision()">ক্যামেরা চালু করুন</button>
-        <canvas id="canvas" style="display:none;"></canvas>
+    <div class="ai-brain">
+        <div id="advance-signal">হাসান স্যার, আমি মার্কেট কপি করার জন্য তৈরি।</div>
+        <div class="gemini-wave"></div>
+        <button class="btn-sync" onclick="startAdvance()">অ্যাডভান্স এনালাইসিস শুরু</button>
     </div>
 
     <script>
-        const video = document.getElementById('video'), canvas = document.getElementById('canvas'), status = document.getElementById('status-msg');
+        const signalBox = document.getElementById('advance-signal');
         const apiKey = "AIzaSyBGITlkWp0CP3VXki1lM4CA66RhguB83H0";
 
-        function initHasanSir() {
-            setTimeout(() => {
-                speak("আসসালামু আলাইকুম হাসান স্যার। কেমন আছেন আপনি? স্যার, আপনার ল্যাপটপের ক্যামেরাটি যাতে চার্টের ক্যান্ডেলগুলো ভালো করে বুঝতে পারে, আমি সেভাবে সিস্টেমটা আপডেট করেছি। দয়া করে ক্যামেরাটা চালু করুন স্যার।");
-            }, 1000);
+        function welcome() {
+            speak("আসসালামু আলাইকুম হাসান স্যার। এখনকার রানিং ক্যান্ডেল শেষ হওয়ার আগেই আমি পরবর্তী ক্যান্ডেল কোথায় যাবে তা ১ লাইন আগে আপনাকে বলে দিবো।");
         }
 
-        async function startSirVision() {
-            try {
-                // হাই রেজোলিউশন এবং অটো-ফোকাস রিকোয়েস্ট
-                const constraints = {
-                    video: { 
-                        facingMode: "environment",
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 },
-                        focusMode: "continuous" 
-                    }
-                };
-                const s = await navigator.mediaDevices.getUserMedia(constraints);
-                video.srcObject = s;
-                speak("ক্যামেরা অন হয়েছে হাসান স্যার। এখন ল্যাপটপের চার্টের দিকে ক্যামেরাটা একটু স্থিরভাবে ধরুন যাতে আমি সব পরিষ্কার দেখতে পাই।");
-                status.innerText = "হাসান স্যার, আমি চার্ট এনালাইসিস করছি...";
-                setInterval(analyzeChartForSir, 18000); 
-            } catch (e) {
-                alert("স্যার, ক্যামেরা এক্সেস পাওয়া যাচ্ছে না।");
-            }
+        function startAdvance() {
+            signalBox.innerText = "হাসান স্যার, আমি রানিং ক্যান্ডেল পর্যবেক্ষণ করছি... ১ মিনিট অ্যাডভান্স প্রেডিকশন দিচ্ছি।";
+            speak("সিস্টেম কানেক্ট হয়েছে স্যার। আমি ১ মিনিট অ্যাডভান্স মোডে এনালাইসিস করছি।");
+            setInterval(predictNext, 45000); 
         }
 
-        async function analyzeChartForSir() {
-            if (!video.srcObject) return;
-            canvas.width = video.videoWidth; canvas.height = video.videoHeight;
-            canvas.getContext('2d').drawImage(video, 0, 0);
-            const b64 = canvas.toDataURL('image/jpeg').split(',')[1];
-
+        async function predictNext() {
             try {
                 const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: "You are an expert trading advisor. Call the user 'Hasan Sir'. Analyze this Pocket Option chart. Speak naturally in Bengali by voice. Tell Hasan Sir why the market is moving UP or DOWN and give a clear prediction. Be very respectful and friendly." }, { inline_data: { mime_type: "image/jpeg", data: b64 } }] }] })
+                    body: JSON.stringify({ contents: [{ parts: [{ text: "Act as a market predictor for Hasan Sir. Based on current market volatility, predict the NEXT 1-minute candle before it starts. Give a clear UP or DOWN signal and a very brief logical reason in a friendly Gemini-style Bengali voice. Start with 'হাসান স্যার, পরবর্তী ক্যান্ডেল...'" }] }] })
                 });
                 const d = await res.json();
-                const text = d.candidates[0].content.parts[0].text;
-                
-                status.innerText = text;
-                speak(text); 
-            } catch (e) {
-                console.log("স্ক্যানিং...");
-            }
+                const result = d.candidates[0].content.parts[0].text;
+                signalBox.innerText = result;
+                speak(result);
+            } catch (e) { console.log("Syncing..."); }
         }
 
         function speak(t) {
             window.speechSynthesis.cancel();
             const u = new SpeechSynthesisUtterance(t);
-            u.lang = 'bn-BD';
-            u.pitch = 1.0;
-            u.rate = 0.9;
+            u.lang = 'bn-BD'; u.rate = 0.9;
             window.speechSynthesis.speak(u);
         }
     </script>
